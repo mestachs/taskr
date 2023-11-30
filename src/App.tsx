@@ -22,7 +22,7 @@ const defaultCodeSnippets = [
   
   const db = await gpkg.loadAndCache("play",  root+"org_units-2023-11-28-17-03.gpkg.zip");
     
-  const mode = "orgUnits" // "submissions" "schema" "orgUnits"
+  const mode = "submissions" // "submissions" "schema" "orgUnits"
   let results = []
     
   if (mode == "orgUnits") {
@@ -42,8 +42,19 @@ const defaultCodeSnippets = [
    return await db.exec('SELECT * FROM sqlite_schema').get.objs
   } else if (mode == "submissions") {
   
-  results = await db.exec(\`select json_extract(json,'$."de388__15y"') as "de388__15y", period, submissions.name , org_unit_id ,  facilities.name as facility_name from submissions join "level-4-Facility" as facilities on facilities.id = submissions.org_unit_id order by period, submissions.name\`).get.objs  
+  results = await db.exec(\`
+  select 
+    json_extract(json,'$."de388__15y"') as "de388__15y", 
+    period, submissions.name , org_unit_id ,  
+    facilities.name as facility_name, facilities.geom as geom
+    from submissions join "level-4-Facility" as facilities on facilities.id = submissions.org_unit_id 
+    order by period, submissions.name\`).get.objs  
   
+    // show the district on the same map
+    results = results.concat(
+      await db.exec('SELECT * FROM "level-2-District"').get.objs,
+    );
+
   return results
   } else {
     throw new Error("mode no supported "+mode) 
