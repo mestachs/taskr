@@ -7,6 +7,26 @@ import turf from "../lib/support/turf";
 import L from "leaflet";
 L.glify = glify;
 
+const hexToRgb = (hex, cache) => {
+  if (cache[hex]) {
+    return cache[hex];
+  }
+  // Remove the hash sign if present
+  const hexc = hex.replace(/^#/, "");
+
+  // Parse the hex value
+  const bigint = parseInt(hexc, 16);
+
+  // Extract RGB values
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
+
+  const color = { r: r / 255, g: g / 255, b: b / 255 };
+  cache[hex] = color;
+  return color;
+};
+
 const multiPolygon2PolygonOnly = (geoJ) => {
   let polyOnly = { type: "FeatureCollection", features: [] };
   geoJ.features.forEach((f) => {
@@ -27,7 +47,7 @@ const multiPolygon2PolygonOnly = (geoJ) => {
 const bboxForPoints = (points) => {
   const result = [Infinity, Infinity, -Infinity, -Infinity];
   for (let point of points) {
-    let coord = point.position;
+    let coord = point.geom.coordinates;
     if (result[0] > coord[0]) {
       result[0] = coord[0];
     }
@@ -87,11 +107,16 @@ export const OrgunitMap = ({ results }) => {
     if (map) {
       map._container.style.cursor = "crosshair";
       let bound = undefined;
-      /*
-      if (pointMarkers && pointMarkers.length > 0) {
-        const bbox = bboxForPoints(pointMarkers);
+
+      if (newRawPoints && newRawPoints.length > 0) {
+        const bbox = bboxForPoints(newRawPoints);
         bound = bbox;
-      }*/
+        map.fitBounds([
+          [bbox[1], bbox[0]],
+          [bbox[3], bbox[2]],
+        ]);
+        return;
+      }
 
       if (bound && bound[0] !== Infinity) {
         const southWest = L.latLng(bound[0], bound[1]);
@@ -132,6 +157,7 @@ export const OrgunitMap = ({ results }) => {
   }, [map]);
 
   useEffect(() => {
+    const cache = {};
     if (map) {
       L.glify.shapes({
         map,
@@ -154,15 +180,22 @@ export const OrgunitMap = ({ results }) => {
         L.glify.points({
           map: map,
           sensitivity: 0.5,
-          size: function (i) {
-            return map._zoom + 5;
+          color: (i, f) => {
+            const rawPoint = newRawPoints[i];
+            if (rawPoint.color) {
+              return hexToRgb(rawPoint.color, cache);
+            }
+            return { r: 0, g: 0, b: 0.8 };
           },
-          hover: (e, feature) => {
-            console.log("hovered on Point", feature, e);
+          size: function (i) {
+            const zoomLevel = map._zoom;
+            if (zoomLevel >= 8) {
+              return 8;
+            }
+            return 2;
           },
           click: (e, feature) => {
             setClicked(newRawPoints[feature[2]]);
-            debugger;
             //set up a standalone popup (use a popup as a layer)
             L.popup()
               .setLatLng(feature)
@@ -182,16 +215,14 @@ export const OrgunitMap = ({ results }) => {
   }, [map]);
 
   return (
-    <div>
-      <Button onClick={handleClickFitToBound}>Fit</Button>
-      <pre>{JSON.stringify(clicked.properties)}</pre>
+    <div style={{ flex: '1 1 0%' }}>
       <MapContainer
         center={position}
         zoom={8}
         scrollWheelZoom={true}
         doubleClickZoom={false}
         preferCanvas={true}
-        style={{ height: "900px", width: "100vw" }}
+        style={{ height: "700px", width: "50vw" }}
         ref={setMap}
       >
         <TileLayer
@@ -199,6 +230,8 @@ export const OrgunitMap = ({ results }) => {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
       </MapContainer>
+      <pre>{clicked && JSON.stringify(clicked.properties)}</pre>
+
     </div>
   );
 };

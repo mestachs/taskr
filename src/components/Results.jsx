@@ -6,8 +6,8 @@ import { AsPrimitive } from "./AsPrimitive";
 import ErrorBoundary from "./ErrorBoundary";
 import { OrgunitMap } from "./OrgunitMap";
 
-export function Results({ results, label, position }) {
-  const [selectedTab, setSelectedTab] = useState(1);
+export function Results({ results, initialSelectedTab, label, position }) {
+  const [selectedTab, setSelectedTab] = useState(initialSelectedTab || 1);
 
   if (!Array.isArray(results)) {
     return (
@@ -26,21 +26,26 @@ export function Results({ results, label, position }) {
   };
 
   return (
-    <div style={{ width: "80%", maxWidth: "80%"}}>
-      <Tabs
+    <div
+      style={{
+        position: 'relative',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+      }
+    }>
+     { initialSelectedTab == undefined && <Tabs
         value={selectedTab}
         onChange={handleChange}
         aria-label="simple tabs example"
       >
         <Tab label="Table" value={1} />
         <Tab label="Map" value={2} />
-      </Tabs>
-      {selectedTab == 2 && (
-        <OrgunitMap results={results} showLayers={true} />
-      )}
-      {selectedTab == 1 && (
-        <div style={{ width: "100vw", height: "50vh" ,color:"black",  backgroundColor: "grey"}}>
-          {results && <DataGrid data={results} />}
+      </Tabs>}
+      {selectedTab == 2 && <OrgunitMap results={results} showLayers={true} />}
+      {selectedTab == 1 && results && (
+        <div   style={{ flex: '1 1 0%' }}>
+            <DataGrid data={results} />
         </div>
       )}
     </div>
