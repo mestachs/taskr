@@ -2,7 +2,6 @@ import {
   HashRouter as Router,
   Routes,
   Route,
-  Navigate,
 } from "react-router-dom";
 import {
   CssBaseline,
@@ -51,7 +50,7 @@ function App() {
     [
       "codeEditor",
       <GistBasedEditor
-        onDone={(status, results) => {
+        onDone={(_status, results) => {
           setLastRun(new Date().toISOString());
           setResults(results);
         }}
@@ -59,16 +58,14 @@ function App() {
     ],
     [
       "results.table",
-      <div>
-        <div style={{ height: "100%" }}>
-          {results && (
-            <Results
-              key={"Table." + lastRun}
-              results={results}
-              initialSelectedTab={1}
-            />
-          )}
-        </div>
+      <div style={{ height: "100%" }}>
+        {results && (
+          <Results
+            key={"Table." + lastRun}
+            results={results}
+            initialSelectedTab={1}
+          />
+        )}
       </div>,
     ],
     [
@@ -95,22 +92,23 @@ function App() {
             element={
               <Mosaic<ViewId>
                 renderTile={(id: ViewId, path) => (
-                  <MosaicWindow<ViewId>
-                    path={path}
-                    title={id}
-                  >
+                  <MosaicWindow<ViewId> path={path} title={id}>
                     {ELEMENT_MAP.get(id)}
                   </MosaicWindow>
                 )}
                 initialValue={{
-                  direction: "column",
+                  direction: "row",
                   first: "codeEditor",
                   second: {
-                    direction: "row",
+                    direction: "column",
                     first: "results.table",
                     second: "results.map",
                   },
-                  splitPercentage: 60,
+                  splitPercentage: 40,
+                }}
+                onChange={(props) => {
+                  console.log(props);
+                  debugger;
                 }}
               />
             }
@@ -118,10 +116,26 @@ function App() {
           <Route
             path="/"
             element={
-              <Navigate
-                to="/gh/g/mestachs/c0fd9058cf5b7a02eae11e1d77ca4d09"
-                replace
-              />
+              <div>
+                <h1>Sample recipes</h1>
+                <ul>
+                  <li>
+                    <a href="/#/gh/g/mestachs/8a70aa62f2ffb97414a32af5111d743e">
+                      Geopackage, json_extract
+                    </a>
+                  </li>
+                  <li>
+                    <a href="/#/gh/g/mestachs/7ac45d69b04b1a608620595edc099ec5">
+                      Power plant sqlite
+                    </a>
+                  </li>
+                  <li>
+                    <a href="/#/gh/g/mestachs/c0fd9058cf5b7a02eae11e1d77ca4d09">
+                      Geojson : split belgium in hexagons
+                    </a>
+                  </li>
+                </ul>
+              </div>
             }
           />
         </Routes>

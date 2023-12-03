@@ -7,7 +7,7 @@ import turf from "../lib/support/turf";
 import L from "leaflet";
 L.glify = glify;
 
-const hexToRgb = (hex, cache) => {
+const hexToRgb = (hex, opacity, cache) => {
   if (cache[hex]) {
     return cache[hex];
   }
@@ -22,7 +22,7 @@ const hexToRgb = (hex, cache) => {
   const g = (bigint >> 8) & 255;
   const b = bigint & 255;
 
-  const color = { r: r / 255, g: g / 255, b: b / 255 };
+  const color = { r: r / 255, g: g / 255, b: b / 255, a: opacity };
   cache[hex] = color;
   return color;
 };
@@ -163,9 +163,34 @@ export const OrgunitMap = ({ results }) => {
         map,
         data: geojsons,
         border: true,
-        /* color: (i, f) => {
-          return {r: 12, g: 12, b:0, a: 0.8 }
-        },*/
+        fillColor: (i, f) => {
+          let opacity = 0.5;
+          if (geojson.properties && geojson.properties.opacity) {
+            opacity = geojson.properties.opacity;
+          }
+          const geojson = geojsons.features[i];
+          if (geojson.properties && geojson.properties.color) {
+            return hexToRgb(geojson.properties.color, opacity, cache);
+          }
+
+          return { r: 0, g: 0, b: 0.8, a: opacity };
+        },
+        color: (i, f) => {
+          const geojson = geojsons.features[i];
+          let opacity = 0.5;
+          if (geojson.properties && geojson.properties.opacity) {
+            opacity = geojson.properties.opacity;
+          }
+          if (geojson.properties && geojson.properties.color) {
+            return hexToRgb(geojson.properties.color, opacity, cache);
+          }
+          return {
+            r: Math.random(),
+            g: Math.random(),
+            b: Math.random(),
+            a: opacity,
+          };
+        },
         click: (e, feature) => {
           L.popup()
             .setLatLng(e.latlng)
@@ -183,7 +208,7 @@ export const OrgunitMap = ({ results }) => {
           color: (i, f) => {
             const rawPoint = newRawPoints[i];
             if (rawPoint.color) {
-              return hexToRgb(rawPoint.color, cache);
+              return hexToRgb(rawPoint.color, 0.8, cache);
             }
             return { r: 0, g: 0, b: 0.8 };
           },
@@ -215,7 +240,7 @@ export const OrgunitMap = ({ results }) => {
   }, [map]);
 
   return (
-    <div style={{ flex: '1 1 0%' }}>
+    <div style={{ flex: "1 1 0%" }}>
       <MapContainer
         center={position}
         zoom={8}
@@ -231,7 +256,6 @@ export const OrgunitMap = ({ results }) => {
         />
       </MapContainer>
       <pre>{clicked && JSON.stringify(clicked.properties)}</pre>
-
     </div>
   );
 };
