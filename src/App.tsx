@@ -58,7 +58,7 @@ function App() {
     ],
     [
       "results.table",
-      <div style={{ height: "100%" }}>
+      <div style={{ height: "100%" }} id="results.table">
         {results && (
           <Results
             key={"Table." + lastRun}
@@ -70,7 +70,7 @@ function App() {
     ],
     [
       "results.map",
-      <div>
+      <div id="results.map">
         {results && (
           <Results
             key={"Map." + lastRun}
@@ -120,20 +120,34 @@ function App() {
                 <h1>Sample recipes</h1>
                 <ul>
                   <li>
-                    <a href="/#/gh/g/mestachs/8a70aa62f2ffb97414a32af5111d743e">
+                    <a href="./#/gh/g/mestachs/8a70aa62f2ffb97414a32af5111d743e">
                       Geopackage, json_extract
                     </a>
                   </li>
                   <li>
-                    <a href="/#/gh/g/mestachs/7ac45d69b04b1a608620595edc099ec5">
+                    <a href="./#/gh/g/mestachs/7ac45d69b04b1a608620595edc099ec5">
                       Power plant sqlite
                     </a>
                   </li>
                   <li>
-                    <a href="/#/gh/g/mestachs/c0fd9058cf5b7a02eae11e1d77ca4d09">
+                    <a href="./#/gh/g/mestachs/c0fd9058cf5b7a02eae11e1d77ca4d09">
                       Geojson : split belgium in hexagons
                     </a>
                   </li>
+                  <li>
+                    <a href="./#/gh/g/mestachs/5273bae5c77f319e8883fdaac594632a">
+                      Frappe chart
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="./#/gh/g/mestachs/5185f1984f4ceea43c72387612c8b5b7">
+                      turfjs :  Center of mass of belgian communes.
+                    </a>
+                  </li>
+                  
+
+                  
                 </ul>
               </div>
             }
