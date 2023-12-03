@@ -28,6 +28,8 @@
     "react-dom": "^18.2.0",
     "react-leaflet": "^4.2.1",
     "react-mosaic-component": "^6.1.0",
+    "react-router": "^6.20.1",
+    "react-router-dom": "^6.20.1",
     "react-runner": "^1.0.3",
     "spl.js": "^0.1.0-beta.9"
   },

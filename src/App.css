@@ -7,3 +7,7 @@
   background: transparent;
   border: none;
 }
+
+.mosaic-window-body:first-child {
+  height: 100%;
+}
