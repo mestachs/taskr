@@ -12,6 +12,23 @@ interface Recipe {
   gist: any;
 }
 
+const fetchRecipeFromRepo = async (user, repo, path): Promise<Recipe> => {
+  const recipeContent = await fetch(
+    `https://raw.githubusercontent.com/${user}/${repo}/${path}`
+  ).then((response) => response.text());
+
+  debugger
+  return {
+    id: user + repo + path,
+    name: path,
+    editable: true,
+    code: recipeContent,
+    params: [],
+    report: "",
+    gist: recipeContent,
+  };
+};
+
 const fetchRecipeFromGist = async (gistId): Promise<Recipe> => {
   const gist = await fetch(`https://api.github.com/gists/${gistId}`).then(
     (response) => response.json()
@@ -30,11 +47,18 @@ const fetchRecipeFromGist = async (gistId): Promise<Recipe> => {
   };
 };
 
-export function GistBasedEditor({ onDone }) {
+export function GithubBasedEditor({ onDone }) {
   const [recipe, setRecipe] = useState<Recipe>();
   const params = useParams();
   useEffect(() => {
-    fetchRecipeFromGist(params.gistId).then((r) => setRecipe(r));
+    debugger;
+    if (params["source_type"] == "g") {
+      fetchRecipeFromGist(params.gistId).then((r) => setRecipe(r));
+    } else if (params["source_type"] == "r") {
+      fetchRecipeFromRepo(params.repo, params.gistId, params["*"]).then((r) =>
+        setRecipe(r)
+      );
+    }
   }, [params.gistId]);
 
   if (recipe) {

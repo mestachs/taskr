@@ -1,8 +1,4 @@
-import {
-  HashRouter as Router,
-  Routes,
-  Route,
-} from "react-router-dom";
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import {
   CssBaseline,
   ThemeProvider,
@@ -16,7 +12,7 @@ import "react-mosaic-component/react-mosaic-component.css";
 import { Mosaic, MosaicWindow } from "react-mosaic-component";
 
 import { Results } from "./components/Results";
-import { GistBasedEditor } from "./components/GistBasedEditor";
+import { GithubBasedEditor } from "./components/GithubBasedEditor";
 
 export type ViewId = "codeEditor" | "results.map" | "results.table";
 
@@ -88,7 +84,7 @@ function App() {
       <Router>
         <Routes>
           <Route
-            path={`/gh/g/:repo/:gistId`}
+            path={`/gh/:source_type/:repo/:gistId/*`}
             element={
               <Mosaic<ViewId>
                 renderTile={(id: ViewId, path) => (
@@ -113,6 +109,8 @@ function App() {
               />
             }
           />
+
+    
           <Route
             path="/"
             element={
@@ -142,12 +140,9 @@ function App() {
 
                   <li>
                     <a href="./#/gh/g/mestachs/5185f1984f4ceea43c72387612c8b5b7">
-                      turfjs :  Center of mass of belgian communes.
+                      turfjs : Center of mass of belgian communes.
                     </a>
                   </li>
-                  
-
-                  
                 </ul>
               </div>
             }
