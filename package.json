@@ -18,6 +18,7 @@
     "@turf/turf": "^6.5.0",
     "@uiw/react-codemirror": "^4.21.21",
     "@zip.js/zip.js": "^2.7.31",
+    "buffer": "^6.0.3",
     "gh-pages": "^6.1.0",
     "leaflet": "1.9.2",
     "leaflet.glify": "^3.2.0",
@@ -31,7 +32,8 @@
     "react-router": "^6.20.1",
     "react-router-dom": "^6.20.1",
     "react-runner": "^1.0.3",
-    "spl.js": "^0.1.0-beta.9"
+    "spl.js": "^0.1.0-beta.9",
+    "xlsx-populate": "^1.21.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.37",

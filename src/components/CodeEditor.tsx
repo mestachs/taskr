@@ -1,6 +1,4 @@
-import {
-  Button,
-} from "@mui/material";
+import { Button } from "@mui/material";
 import { useState } from "react";
 import * as prettier from "prettier/standalone.mjs";
 import prettierPluginBabel from "prettier/plugins/babel.mjs";
@@ -8,10 +6,12 @@ import prettierPluginEstree from "prettier/plugins/estree.mjs";
 import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 import { evalCode } from "../lib/CodeEvaluator";
+import Params from "./Params";
 
+export function CodeEditor({ onDone, recipe }) {
+  const [code, setCode] = useState<string>(recipe.code);
+  const [parameters, setParameters] = useState<any>({});
 
-export function CodeEditor({onDone, initialCode}) {
-  const [code, setCode] = useState<string>(initialCode);
   const [status, setStatus] = useState<string>("");
 
   const runCode = async () => {
@@ -26,7 +26,10 @@ export function CodeEditor({onDone, initialCode}) {
       });
       setCode(formattedCode);
 
-      const r = await evalCode(formattedCode, { logger: setStatus });
+      const r = await evalCode(formattedCode, {
+        ...parameters,
+        logger: setStatus,
+      });
       const end = new Date();
       const elapsed = end.getTime() - start.getTime();
       console.log(
@@ -34,15 +37,26 @@ export function CodeEditor({onDone, initialCode}) {
         "Results calculated in " + elapsed + " ms"
       );
       setStatus("Results calculated in " + elapsed + " ms");
-      onDone("success", r)
+      onDone("success", r);
     } catch (error: any) {
       setStatus("Error : " + error.message);
-      onDone("error", error)
+      onDone("error", error);
     }
   };
 
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
+      <Params
+        params={recipe.params.parameters}
+        onParametersChange={(newParameters) => setParameters(newParameters)}
+      ></Params>
+      <div style={{ display: "flex", flexDirection: "row" }}>
+        <Button onClick={runCode} variant="contained" color="primary">
+          Run
+        </Button>
+        &nbsp;&nbsp;
+        <div>{status}</div>
+      </div>
       <CodeMirror
         style={{ maxHeight: "95%", height: "95%" }}
         height="98%"
@@ -51,13 +65,6 @@ export function CodeEditor({onDone, initialCode}) {
         extensions={[javascript({ jsx: true })]}
         onChange={(e) => setCode(e)}
       />
-      <div style={{ display: "flex", flexDirection: "row" }}>
-        <Button onClick={runCode} variant="contained" color="primary">
-          Run
-        </Button>
-        &nbsp;&nbsp;
-        <div>{status}</div>
-      </div>
     </div>
   );
 }

@@ -17,13 +17,12 @@ const fetchRecipeFromRepo = async (user, repo, path): Promise<Recipe> => {
     `https://raw.githubusercontent.com/${user}/${repo}/${path}`
   ).then((response) => response.text());
 
-  debugger
   return {
     id: user + repo + path,
     name: path,
     editable: true,
     code: recipeContent,
-    params: [],
+    params: { parameters:[]},
     report: "",
     gist: recipeContent,
   };
@@ -41,7 +40,7 @@ const fetchRecipeFromGist = async (gistId): Promise<Recipe> => {
     code: gist.files["recipe.js"].content,
     params: gist.files["params.json"]
       ? JSON.parse(gist.files["params.json"].content)
-      : [],
+      : { parameters:[]},
     report: gist.files["report.md"] ? gist.files["report.md"].content : "",
     gist,
   };
@@ -51,7 +50,6 @@ export function GithubBasedEditor({ onDone }) {
   const [recipe, setRecipe] = useState<Recipe>();
   const params = useParams();
   useEffect(() => {
-    debugger;
     if (params["source_type"] == "g") {
       fetchRecipeFromGist(params.gistId).then((r) => setRecipe(r));
     } else if (params["source_type"] == "r") {
@@ -62,7 +60,7 @@ export function GithubBasedEditor({ onDone }) {
   }, [params.gistId]);
 
   if (recipe) {
-    return <CodeEditor onDone={onDone} initialCode={recipe.code} />;
+    return <CodeEditor onDone={onDone} recipe={recipe} />;
   }
   return <h1>Loading gist...</h1>;
 }

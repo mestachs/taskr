@@ -104,7 +104,6 @@ function App() {
                 }}
                 onChange={(props) => {
                   console.log(props);
-                  debugger;
                 }}
               />
             }
@@ -113,7 +112,7 @@ function App() {
           <Route
             path="/"
             element={
-              <div>
+              <div style={{margin:"50px"}}>
                 <h1>Sample recipes</h1>
                 <ul>
                   <li>
@@ -140,6 +139,12 @@ function App() {
                   <li>
                     <a href="./#/gh/g/mestachs/5185f1984f4ceea43c72387612c8b5b7">
                       turfjs : Center of mass of belgian communes.
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="./#/gh/g/mestachs/61ec8c5561ca40630df34fc2a6d92f9a">
+                      Recipe with parameters showcase
                     </a>
                   </li>
                 </ul>

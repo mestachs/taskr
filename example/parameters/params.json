@@ -1,0 +1,45 @@
+{
+    "editable": false,
+    "parameters": [
+        {
+            "id": "a_text",
+            "type": "text"
+        },
+        {
+            "id": "mode",
+            "label": "Select run mode",
+            "type": "select",
+            "default": "generateEmptyCsv",
+            "choices": [
+                [
+                    "choice1",
+                    "Choice 1"
+                ],
+                [
+                    "choice2",
+                    "Choice 2 (generally not good)"
+                ],
+                [
+                    "choice3",
+                    "Choice 3 (too good to be true)"
+                ]
+            ]
+        },
+        {
+            "id": "an_excel",
+            "type": "xlsx"
+        },
+        {
+            "id": "a_json",
+            "type": "json"
+        },
+        {
+            "id": "a_csv",
+            "type": "csv"
+        },
+        {
+            "id": "a_geopackage",
+            "type": "gpkg"
+        }
+    ]
+}
