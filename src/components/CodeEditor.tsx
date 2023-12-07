@@ -45,7 +45,14 @@ export function CodeEditor({ onDone, recipe }) {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column" }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        overflow: "scroll",
+        height: "100%",
+      }}
+    >
       <Params
         params={recipe.params.parameters}
         onParametersChange={(newParameters) => setParameters(newParameters)}
@@ -58,6 +65,7 @@ export function CodeEditor({ onDone, recipe }) {
         <div>{status}</div>
       </div>
       <CodeMirror
+        editable={recipe?.params?.editable}
         style={{ maxHeight: "95%", height: "95%" }}
         height="98%"
         theme="light"
