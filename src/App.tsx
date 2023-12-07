@@ -45,7 +45,7 @@ function App() {
   const ELEMENT_MAP = new Map<ViewId, JSX.Element>([
     [
       "codeEditor",
-      <GistBasedEditor
+      <GithubBasedEditor
         onDone={(_status, results) => {
           setLastRun(new Date().toISOString());
           setResults(results);
@@ -110,7 +110,6 @@ function App() {
             }
           />
 
-    
           <Route
             path="/"
             element={
