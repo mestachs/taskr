@@ -31,7 +31,6 @@ const Params = ({ params, onParametersChange }) => {
     const files = inputElement.target.files || [];
     if (!files.length) return;
     const file = files[0];
-    debugger;
 
     const reader = new FileReader();
 
@@ -39,7 +38,6 @@ const Params = ({ params, onParametersChange }) => {
     reader.onload = async function (loadEvent) {
       // The result property contains the ArrayBuffer
       const arrayBuffer = loadEvent.target.result;
-      debugger;
       const spl = await SPL();
       const db = await spl.db(arrayBuffer);
       db.exec("SELECT EnableGpkgAmphibiousMode()");
@@ -60,14 +58,24 @@ const Params = ({ params, onParametersChange }) => {
     const files = inputElement.target.files || [];
     if (!files.length) return;
     const file = files[0];
-    XlsxPopulate.fromDataAsync(file).then(function (workbook) {
-      const newParameters = {
-        ...parameters,
-        [elementName]: workbook,
-      };
-      setParameters(newParameters);
-      onParametersChange(newParameters);
-    });
+
+    const reader = new FileReader();
+
+    // Set up an event listener for when the file is loaded
+    reader.onload = async function (loadEvent) {
+      const arrayBuffer = loadEvent.target.result;
+      XlsxPopulate.fromDataAsync(arrayBuffer).then(function (workbook) {
+        const newParameters = {
+          ...parameters,
+          [elementName]: workbook,
+        };
+        setParameters(newParameters);
+        onParametersChange(newParameters);
+      });
+    };
+
+    // Read the file as ArrayBuffer
+    reader.readAsArrayBuffer(file);
   }
 
   function parserJson(inputElement) {

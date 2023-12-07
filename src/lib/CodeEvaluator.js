@@ -58,6 +58,14 @@ export const evalCode = async (code, parameters) => {
       identifier: "PapaParse",
       entryPoint: async () => import("papaparse"),
     },
+
+    {
+      identifier: "XlsxPopulate",
+      entryPoint: async ()=> {
+        const xlspopulate = await import("./support/xlspopulate");
+        return xlspopulate.default;
+      },
+    },
     { identifier: "parameters", entryPoint: async () => parameters },
     { identifier: "gpkg", entryPoint: async () => gpkg },
   ];
