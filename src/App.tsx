@@ -14,7 +14,28 @@ import { Mosaic, MosaicWindow } from "react-mosaic-component";
 import { Results } from "./components/Results";
 import { GithubBasedEditor } from "./components/GithubBasedEditor";
 
-export type ViewId = "codeEditor" | "results.map" | "results.table";
+import FetchInterceptor from "./lib/FetchInterceptor";
+
+let setOutRequest = undefined;
+FetchInterceptor.register({
+  onBeforeRequest(request, _) {
+    if (setOutRequest) {
+      setOutRequest([request.url, request.method, "running"]);
+    }
+  },
+  onRequestSuccess(response, request, _) {
+    if (setOutRequest) {
+      setOutRequest([request.url, request.method, "success", response.status]);
+    }
+  },
+  onRequestFailure(response, request, _) {
+    if (setOutRequest) {
+      setOutRequest([request.url, request.method, "failed", response.status]);
+    }
+  },
+});
+
+export type ViewId = "codeEditor" | "results.map" | "results.table" | "status";
 
 function App() {
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
@@ -22,6 +43,8 @@ function App() {
   const [results, setResults] = useState([]);
   const [lastRun, setLastRun] = useState<string>("");
 
+  const [requests, setRequests] = useState([]);
+  setOutRequest = setRequests;
   const theme = useMemo(
     () =>
       createTheme({
@@ -43,6 +66,20 @@ function App() {
   );
 
   const ELEMENT_MAP = new Map<ViewId, JSX.Element>([
+    [
+      "status",
+      <span>
+        {requests && requests.length > 1 && (
+          <>
+            <a href={requests[0]} target="_blank" rel="noopener noreferrer">
+              {decodeURIComponent(requests[0])}
+            </a>
+            {"     "}
+            {requests.slice(1).join(" | ")}
+          </>
+        )}
+      </span>
+    ],
     [
       "codeEditor",
       <GithubBasedEditor
@@ -94,7 +131,13 @@ function App() {
                 )}
                 initialValue={{
                   direction: "row",
-                  first: "codeEditor",
+                  first: {
+                    direction: "column",
+                    first: "codeEditor",
+                    second: "status",
+                    splitPercentage: 92,
+                    
+                  },
                   second: {
                     direction: "column",
                     first: "results.table",
@@ -112,7 +155,7 @@ function App() {
           <Route
             path="/"
             element={
-              <div style={{margin:"50px"}}>
+              <div style={{ margin: "50px" }}>
                 <h1>Sample recipes</h1>
                 <ul>
                   <li>
