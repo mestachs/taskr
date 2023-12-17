@@ -190,6 +190,12 @@ function App() {
                       Recipe with parameters showcase
                     </a>
                   </li>
+
+                  <li>
+                    <a href="./#/gh/g/mestachs/0a964931eecc832600ee4f0d19582f6e">
+                      DuckDB small showcase
+                    </a>
+                  </li>
                 </ul>
               </div>
             }
