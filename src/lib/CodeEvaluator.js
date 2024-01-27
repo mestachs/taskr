@@ -1,5 +1,6 @@
 import SPL from "spl.js";
 import * as zip from "@zip.js/zip.js";
+import * as osm2geojson from "osm2geojson-lite" ;
 
 const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
 
@@ -68,6 +69,12 @@ export const evalCode = async (code, parameters) => {
     },
     { identifier: "parameters", entryPoint: async () => parameters },
     { identifier: "gpkg", entryPoint: async () => gpkg },
+    {
+      identifier: "osmtogeojson",
+      entryPoint: async () => {
+        return osm2geojson;
+      },
+    },    
   ];
   const entryPoints = [];
   for (let entryPoint of libs.map((l) => l.entryPoint)) {

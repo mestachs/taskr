@@ -70,13 +70,15 @@ export const OrgunitMap = ({ results }) => {
   const position = [-2.9593, 25.9359];
   const finalResults = results || [];
   const nonPoints = finalResults.filter(
-    (r) => r.geom && r.geom.type != "Point"
+    (r) => r.geom && r.geom.type != "Point" && r.geom.type != "LineString"
   );
   const [map, setMap] = useState(null);
 
   const newRawPoints = finalResults.filter(
     (r) => r.geom && r.geom.type === "Point"
   );
+
+  const newRawLines = finalResults.filter((r) => r.geom && r.geom.type === "LineString" );
 
   const geojsons = multiPolygon2PolygonOnly({
     type: "FeatureCollection",
@@ -236,6 +238,50 @@ export const OrgunitMap = ({ results }) => {
           }),
         });
       }
+
+      if (newRawLines.length > 0) {
+        debugger
+        L.glify.lines({
+          map: map,
+          opacity: 0.1,
+          sensitivity: 0.5,
+          latitudeKey: 1,
+          weight: 1,
+          size: 1,
+          longitudeKey: 0,          
+          color: (i, f) => {
+            let opacity = 0.1;
+            const rawPoint = newRawLines[i];
+            if (rawPoint.color) {
+              return hexToRgb(rawPoint.color, 0.8, cache);
+            }
+            return { r: 0, g: 0.8, b: 0, a:opacity};
+          },
+          click: (e, feature) => {
+            debugger
+            setClicked(feature);
+            //set up a standalone popup (use a popup as a layer)
+            L.popup()
+              .setLatLng(e.latlng)
+              .setContent(
+                `You clicked the point at longitude:${e.latlng.lng}, latitude:${
+                  e.latlng.lat
+                } ${JSON.stringify({...feature, geom: null, geometry: null})}`
+              )
+              .openOn(map);
+          },
+          data: {
+            type: "FeatureCollection",
+            features: newRawLines.map((r) => {
+              return {
+                type: "Feature",
+                geometry: r.geom,
+                properties: {...r.properties, ...r.geom.properties}
+              };
+            }),
+          }
+        });
+      }      
     }
   }, [map]);
 

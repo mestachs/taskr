@@ -23,6 +23,7 @@
     "leaflet": "1.9.2",
     "leaflet.glify": "^3.2.0",
     "lodash": "^4.17.21",
+    "osm2geojson-lite": "^0.9.4",
     "papaparse": "^5.4.1",
     "prettier": "^3.1.0",
     "react": "^18.2.0",
